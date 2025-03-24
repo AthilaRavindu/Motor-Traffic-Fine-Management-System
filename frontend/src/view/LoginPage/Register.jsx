@@ -19,7 +19,9 @@ const RegisterPage = () => {
     const [formData, setFormData] = useState({
         username: "",
         email: "",
+        userNIC:"",
         password: "",
+
     });
     const [error, setError] = useState("");
 
@@ -33,9 +35,11 @@ const RegisterPage = () => {
 
     const handleRegister = async () => {
         try {
+            alert(formData.userNIC)
             const response = await axios.post("http://localhost:5000/users/auth/register", {
                 name: formData.username,
                 email: formData.email,
+                idNumber:formData.userNIC,
                 password: formData.password,
                 
             });
@@ -117,6 +121,21 @@ const RegisterPage = () => {
                             placeholder="User Mail"
                             name="email"
                             value={formData.email}
+                            onChange={handleChange}
+                            fullWidth
+                            InputProps={{
+                                style: {
+                                    color: "#fff",
+                                    backgroundColor: "#444",
+                                },
+                            }}
+                            sx={{ mb: 2 }}
+                        />
+                        <TextField
+                            variant="outlined"
+                            placeholder="User NIC"
+                            name="userNIC"
+                            value={formData.userNIC}
                             onChange={handleChange}
                             fullWidth
                             InputProps={{

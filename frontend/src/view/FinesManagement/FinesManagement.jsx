@@ -2,6 +2,9 @@ import { Box, Button, Typography } from "@mui/material";
 import COLORS from "../../utils/Colors";
 import FinesCard from "../../components/FinesManagementCards/FinesCard"
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { API_BASE_URL } from "../../Config";
 
 const finesData = [
   {
@@ -35,10 +38,33 @@ const finesData = [
 ];
 
 const FinesManagement = () => {
+
+  const [fineDetails, setFineDetails] = useState([]);
   const navigate = useNavigate();
 
   const normalFines = finesData.filter((e) => e.category === "Normal Fines");
   const courtFines = finesData.filter((e) => e.category === "Court Fines");
+
+  const isAdmin = localStorage.getItem('isAdmin');
+  console.log(typeof(isAdmin));
+
+  const fetchData = async() => {
+    try{
+      const response = await axios.get(API_BASE_URL + '/fine/all');
+
+      console.log(response);
+
+      if(response.status === 200) {
+        setFineDetails(response.data.data);
+      }
+    }catch(err){
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  },[])
 
   return (
     <Box sx={{ p: 4, bgcolor: "#0D0C2B", borderRadius: 3, color: COLORS.white }}>
@@ -55,7 +81,7 @@ const FinesManagement = () => {
           <Typography sx={{ fontSize: "24px", fontWeight: 800 }}>
             Normal Fines
           </Typography>
-          <Button
+          {isAdmin === 'true' &&           <Button
             sx={{
               bgcolor: COLORS.orangeColor,
               color: COLORS.white,
@@ -68,9 +94,9 @@ const FinesManagement = () => {
             onClick={() => navigate("/FinesDetails")}
           >
             + New Fine
-          </Button>
+          </Button>}
         </Box>
-        <Box
+        {/* <Box
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -86,8 +112,8 @@ const FinesManagement = () => {
               fineamount={data.fineamount}
             />
           ))}
-        </Box>
-        <Button
+        </Box> */}
+        {/* <Button
           sx={{
             mt: 2,
             color: COLORS.lightBlue,
@@ -96,14 +122,14 @@ const FinesManagement = () => {
           }}
         >
           View More...
-        </Button>
+        </Button> */}
       </Box>
 
       {/* Court Fines Section */}
       <Box>
-        <Typography sx={{ textAlign: "left", fontSize: "24px", fontWeight: 800, mb: 3 }}>
+        {/* <Typography sx={{ textAlign: "left", fontSize: "24px", fontWeight: 800, mb: 3 }}>
           Court Fines
-        </Typography>
+        </Typography> */}
         <Box
           sx={{
             display: "flex",
@@ -111,7 +137,7 @@ const FinesManagement = () => {
             gap: 2,
           }}
         >
-          {courtFines.map((data, index) => (
+          {fineDetails.map((data, index) => (
             <FinesCard
               key={index}
               offence={data.offence}
