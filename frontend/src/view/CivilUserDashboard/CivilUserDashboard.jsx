@@ -58,7 +58,7 @@ const CivilUserDashboard = () => {
 
             if (responseOfPay.status === 200) {
                 const { sessionId, url, transactionId } = responseOfPay.data;
-                window.location.href = url; // Navigate to the Stripe checkout page
+                window.location.href = url;
 
                 // Listen for Stripe webhook callback or redirect
                 window.addEventListener('load', async () => {
