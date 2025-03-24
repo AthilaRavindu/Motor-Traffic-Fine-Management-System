@@ -13,8 +13,9 @@ const PageHandling = () => {
         if (isAdmin) {
             navigate('/dashbord');
         } else {
-            navigate('/fine-issure-page');
+            navigate('/civilUserDash');
         }
+
     }, [isAdmin, navigate]);
 
     return null; 

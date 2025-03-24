@@ -9,6 +9,7 @@ const LoginPage = () => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({ email: "", password: "" });
+    const [accountType, setAccountType] = useState('user')
 
 
     const handleChange = (e) => {
@@ -16,25 +17,57 @@ const LoginPage = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const handleRoleChange = (event) => {
+        setAccountType(event.target.value); 
+        console.log('Selected Role:', event.target.value); 
+    };
+
     const handleLogin = async () => {
         try {
-            const response = await axios.post(`${API_BASE_URL}/users/auth/login`, {
-                email: formData.email,
-                password: formData.password,
-            });
+            if(accountType === 'user'){
+                const response = await axios.post(`${API_BASE_URL}/users/auth/login`, {
+                    email: formData.email,
+                    password: formData.password,
+                });
+                console.log('login detials',response)
 
-            console.log(response)
-
-            if (response.data.success) {
-                alert("Login successful!");
-                const token = response.data.response.token;
-                const isAdmin = response.data.response.isAdmin;
-                localStorage.setItem('token',token);
-                localStorage.setItem('isAdmin',isAdmin);
-                navigate("/handlePage");
-            } else {
-                alert(response.data.message || "Login failed");
+                if (response.data.success) {
+                    alert("Login successful!");
+                    const token = response.data.response.token;
+                    const isAdmin = response.data.response.userType;
+                    const nicNumber = response.data.response.nicNo;
+                    console.log('NIC',nicNumber)
+                    localStorage.setItem('token',token);
+                    localStorage.setItem('isAdmin',isAdmin);
+                    localStorage.setItem('nicNo',nicNumber);
+                    navigate("/handlePage");
+                } else {
+                    alert(response.data.message || "Login failed");
+                }
             }
+
+            if(accountType === 'policeOfficer'){
+                const response = await axios.post(`${API_BASE_URL}/policeOfficers/auth/login`, {
+                    badgeNumber: formData.email,
+                    password: formData.password,
+                });
+                console.log(response)
+
+                if (response.data.success) {
+                    alert("Login successful!");
+                    const token = response.data.response.token;
+                    const isAdmin = response.data.response.userType;
+                    const userId = response.data.response.userId;
+                    localStorage.setItem('token',token);
+                    localStorage.setItem('isAdmin',isAdmin);
+                    localStorage.setItem('userId', userId);
+                    navigate("/dashbord-police-officer");
+                } else {
+                    alert(response.data.message || "Login failed");
+                }
+            }
+
+
         } catch (error) {
             alert(error.response?.data?.message || "An error occurred");
         }
@@ -70,19 +103,19 @@ const LoginPage = () => {
                     <Box sx={{ flex: 1, p: 4 }}>
                         <RadioGroup
                             row
-                            defaultValue="admin"
-                           // onChange={(e) => setRole(e.target.value)}
+                            defaultValue= {accountType}
+                            onChange={handleRoleChange}
                             sx={{ justifyContent: "center", mb: 3 }}
                         >
                             <FormControlLabel
-                                value="admin"
+                                value="user"
                                 control={<Radio sx={{ color: "#fff" }} />}
-                                label={<Typography color="white">Admin</Typography>}
+                                label={<Typography color="white">User</Typography>}
                             />
                             <FormControlLabel
-                                value="superadmin"
+                                value="policeOfficer"
                                 control={<Radio sx={{ color: "#fff" }} />}
-                                label={<Typography color="white">Super Admin</Typography>}
+                                label={<Typography color="white">Police Officer</Typography>}
                             />
                         </RadioGroup>
                         <TextField

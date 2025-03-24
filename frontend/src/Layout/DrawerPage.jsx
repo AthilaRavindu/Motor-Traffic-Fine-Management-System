@@ -39,12 +39,25 @@ const drawerMenu = [
   
 ];
 
+const userDrawerMenu = [
+  { name: 'Dashboard', icon: <GridViewIcon />, path: '/civilUserDash' },
+  { name: 'Payment', icon: <PaymentsIcon />, path: '/analyze' },
+  
+];
+
+const policeOfficerDrawerMenu = [
+  { name: 'Dashboard', icon: <GridViewIcon />, path: '/dashbord-police-officer' },
+  { name: 'Fines', icon: <RuleIcon />, path: '/finesManagement' },  
+];
+
 const drawerWidth = 320;
 
 const DrawerPage = (props) => {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
+  const [selectedDrawer, setSelectedDrawer] = React.useState([] || JSON.parse(localStorage.getItem('selectedDrawer')));
+
 
   const navigate = useNavigate();
 
@@ -64,7 +77,22 @@ const DrawerPage = (props) => {
   };
   const logOutHandle = ()=>{ localStorage.clear(); navigate('/')}
 
-  const accountType = localStorage.getItem('isAdmin');
+
+
+  React.useEffect(() => {
+    const accountType = localStorage.getItem('isAdmin');
+
+    if (accountType === 'true') {
+      setSelectedDrawer(drawerMenu);  
+    } else if (accountType === 'PoliceOfficer') {
+      setSelectedDrawer(policeOfficerDrawerMenu); 
+    } else {
+      setSelectedDrawer(userDrawerMenu); 
+    }
+  }, []);
+
+  localStorage.setItem('selectedDrawer', JSON.stringify(selectedDrawer));
+
 
 
 
@@ -86,7 +114,7 @@ const DrawerPage = (props) => {
       </Toolbar>
       <Divider />
       <List>
-        {drawerMenu.map((item, index) => (
+        {selectedDrawer.map((item, index) => (
           <ListItem key={index}>
             <ListItemButton
               sx={{

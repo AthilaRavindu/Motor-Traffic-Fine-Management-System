@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 const FinesCard = ({ offence, nature, type, fineamount, fineid}) => {
 
     const navigate = useNavigate();
+    const isAdmin = localStorage.getItem('isAdmin');
 
     return(
         <Box sx={{
@@ -34,7 +35,7 @@ const FinesCard = ({ offence, nature, type, fineamount, fineid}) => {
             <Typography sx={{textAlign:'left'}}>{fineamount}</Typography>
             </Box>
             
-            <Box sx={{
+            {isAdmin === true &&             <Box sx={{
                 display:'flex',
                 flexDirection:'row',
                 borderRadius:'10px'
@@ -46,7 +47,7 @@ const FinesCard = ({ offence, nature, type, fineamount, fineid}) => {
                     <EditIcon/>
                 </IconButton>
 
-            </Box>
+            </Box>}
         </Box>
     )
 }
